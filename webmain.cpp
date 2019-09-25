@@ -1,9 +1,15 @@
 #include "webmain.hpp"
 
+#include <Wt/WBootstrapTheme.h>
+
 namespace wuci {
 
   WebMain::WebMain(const Wt::WEnvironment &env) : Wt::WApplication(env)
   {
+    auto theme = std::make_shared<Wt::WBootstrapTheme>();
+    theme->setVersion(Wt::BootstrapVersion::v3);
+    setTheme(theme);
+
     setTitle("W-UCI");
 
     auto rootContainer = root();
