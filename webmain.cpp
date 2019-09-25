@@ -14,15 +14,15 @@ namespace wuci {
   void WebMain::prepareVpnConfigPage()
   {
     stackedWidget_->addWidget(vpnConfigPage_.preparePage());
-    vpnConfigPage_.connect([this]()
-    {
-      stackedWidget_->setCurrentIndex(1);
-    });
   }
 
   void WebMain::prepareWlanConfigPage()
   {
-    stackedWidget_->addWidget(wlanConfigPage_.preparePage());
+    Wt::WWidget* wc = stackedWidget_->addWidget<Wt::WWidget>(wlanConfigPage_.preparePage());
+    vpnConfigPage_.connect([this, wc]()
+    {
+      stackedWidget_->setCurrentWidget(wc);
+    });
   }
 
 } // namespace wuci
