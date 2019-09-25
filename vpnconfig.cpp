@@ -13,14 +13,14 @@ namespace wuci {
   std::unique_ptr<Wt::WWidget> VpnConfig::preparePage()
   {
     auto container = std::make_unique<Wt::WContainerWidget>();
-    ok_ = container->addNew<Wt::WPushButton>("Ok");
-    ok_->disable();
-
     auto selectionBox = container->addNew<Wt::WSelectionBox>();
 
     selectionBox->addItem("Home");
     selectionBox->addItem("Office");
     selectionBox->addItem("Outside");
+
+    ok_ = container->addNew<Wt::WPushButton>("Ok");
+    ok_->disable();
 
     selectionBox->changed().connect(
       [this, selectionBox]{
