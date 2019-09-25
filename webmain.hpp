@@ -4,6 +4,7 @@
 #include <Wt/WApplication.h>
 #include <Wt/WEnvironment.h>
 #include <Wt/WStackedWidget.h>
+#include <Wt/WNavigationBar.h>
 #include <memory>
 
 #include "vpnconfig.hpp"
@@ -21,6 +22,7 @@ namespace wuci {
 
     private:
         Wt::WStackedWidget* stackedWidget_ = {};
+        Wt::WNavigationBar* navigationBar_ = {};
 
         VpnConfig vpnConfigPage_ = {};
         WlanConfig wlanConfigPage_ = {};

@@ -8,11 +8,14 @@ namespace wuci {
   {
     auto theme = std::make_shared<Wt::WBootstrapTheme>();
     theme->setVersion(Wt::BootstrapVersion::v3);
+
     setTheme(theme);
 
     setTitle("W-UCI");
 
     auto rootContainer = root();
+
+    navigationBar_ = rootContainer->addNew<Wt::WNavigationBar>();
 
     stackedWidget_ = rootContainer->addNew<Wt::WStackedWidget>();
   }
