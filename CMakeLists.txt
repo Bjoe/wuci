@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Set wt_DIR:PATH=/..../Development/wt/usr/lib/cmake/wt
 find_package(wt CONFIG REQUIRED)
 
-add_executable(wuci main.cpp)
+add_executable(wuci main.cpp webmain.cpp vpnconfig.cpp wlanconfig.cpp)
 
 target_link_libraries(wuci PUBLIC
   Wt::Wt
