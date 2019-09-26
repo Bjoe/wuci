@@ -14,9 +14,12 @@ namespace wuci {
   std::unique_ptr<Wt::WWidget> VpnConfig::preparePage()
   {
     auto rootContainer = std::make_unique<Wt::WContainerWidget>();
+    rootContainer->setId("rootContainer-vpnconfig");
     auto container = rootContainer->setLayout(std::make_unique<Wt::WBorderLayout>());
     container->setSpacing(20);
     auto selectionBox = container->addWidget(std::make_unique<Wt::WSelectionBox>(), Wt::LayoutPosition::Center);
+
+    selectionBox->setMaximumSize(maxWidth_, 300);
 
     selectionBox->addItem("Home");
     selectionBox->addItem("Office");
@@ -24,6 +27,7 @@ namespace wuci {
 
     ok_ = container->addWidget(std::make_unique<Wt::WPushButton>("Ok"), Wt::LayoutPosition::South);
     ok_->disable();
+    ok_->setMaximumSize(maxWidth_, 100);
 
     selectionBox->changed().connect(
       [this, selectionBox]{

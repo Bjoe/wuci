@@ -2,6 +2,7 @@
 #define WUCI_VPNCONFIG_HPP
 
 #include <Wt/WWidget.h>
+#include <Wt/WLength.h>
 #include <memory>
 #include <functional>
 
@@ -21,6 +22,7 @@ namespace wuci {
     void connect(std::function<void()> callback);
 
   private:
+    Wt::WLength maxWidth_ = {500};
     Wt::WPushButton* ok_ = {};
   };
 
