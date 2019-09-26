@@ -1,5 +1,7 @@
 #include "webmain.hpp"
 
+#include <Wt/WStackedWidget.h>
+#include <Wt/WNavigationBar.h>
 #include <Wt/WBootstrapTheme.h>
 
 namespace wuci {
@@ -22,13 +24,18 @@ namespace wuci {
 
   void WebMain::prepareVpnConfigPage()
   {
-    stackedWidget_->addWidget(vpnConfigPage_.preparePage());
+    auto[widgetPage, instance] = VpnConfig::createPage(maxWidth_);
+    vpnConfigPage_ = instance;
+    stackedWidget_->addWidget(std::move(widgetPage));
   }
 
   void WebMain::prepareWlanConfigPage()
   {
-    Wt::WWidget* wc = stackedWidget_->addWidget<Wt::WWidget>(wlanConfigPage_.preparePage());
-    vpnConfigPage_.connect([this, wc]()
+    auto[widgetPage, instance] = WlanConfig::createPage(maxWidth_);
+    wlanConfigPage_ = instance;
+
+    Wt::WWidget* wc = stackedWidget_->addWidget<Wt::WWidget>(std::move(widgetPage));
+    vpnConfigPage_->connect([this, wc]()
     {
       stackedWidget_->setCurrentWidget(wc);
     });

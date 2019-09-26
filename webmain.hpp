@@ -3,12 +3,17 @@
 
 #include <Wt/WApplication.h>
 #include <Wt/WEnvironment.h>
-#include <Wt/WStackedWidget.h>
-#include <Wt/WNavigationBar.h>
+#include <Wt/WLength.h>
 #include <memory>
+#include <optional>
 
 #include "vpnconfig.hpp"
 #include "wlanconfig.hpp"
+
+namespace Wt {
+    class WStackedWidget;
+    class WNavigationBar;
+}
 
 namespace wuci {
 
@@ -24,8 +29,9 @@ namespace wuci {
         Wt::WStackedWidget* stackedWidget_ = {};
         Wt::WNavigationBar* navigationBar_ = {};
 
-        VpnConfig vpnConfigPage_ = {};
-        WlanConfig wlanConfigPage_ = {};
+        Wt::WLength maxWidth_ = {500};
+        std::optional<VpnConfig> vpnConfigPage_ = {};
+        std::optional<WlanConfig> wlanConfigPage_ = {};
     };
 
 } // namespace wuci

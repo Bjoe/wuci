@@ -5,6 +5,8 @@
 #include <Wt/WLength.h>
 #include <memory>
 #include <functional>
+#include <tuple>
+#include <optional>
 
 namespace Wt {
     class WPushButton;
@@ -15,15 +17,14 @@ namespace wuci {
   class VpnConfig
   {
   public:
-    VpnConfig();
-
-    std::unique_ptr<Wt::WWidget> preparePage();
+    static std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnConfig>> createPage(Wt::WLength maxWidth);
 
     void connect(std::function<void()> callback);
 
   private:
-    Wt::WLength maxWidth_ = {500};
-    Wt::WPushButton* ok_ = {};
+    VpnConfig(Wt::WPushButton* okButton);
+
+    Wt::WPushButton* okButton_;
   };
 
 } // namespace wuci

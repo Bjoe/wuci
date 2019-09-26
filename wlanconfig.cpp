@@ -10,11 +10,11 @@
 
 namespace wuci {
 
-  WlanConfig::WlanConfig()
+  WlanConfig::WlanConfig(Wt::WPushButton *okButton) : okButton_(okButton)
   {
   }
 
-  std::unique_ptr<Wt::WWidget> WlanConfig::preparePage()
+  std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<WlanConfig> > WlanConfig::createPage(Wt::WLength maxWidth)
   {
     auto rootContainer = std::make_unique<Wt::WContainerWidget>();
     auto outerContainer = rootContainer->setLayout(std::make_unique<Wt::WBorderLayout>());
@@ -32,15 +32,15 @@ namespace wuci {
 
     auto page = std::make_unique<Wt::WPanel>();
     page->setCentralWidget(std::move(container));
-    page->setMaximumSize(maxWidth_, 500);
+    page->setMaximumSize(maxWidth, 500);
 
     outerContainer->addWidget(std::move(page), Wt::LayoutPosition::Center);
 
-    ok_ = outerContainer->addWidget(std::make_unique<Wt::WPushButton>("Ok"), Wt::LayoutPosition::South);
-    ok_->disable();
-    ok_->setMaximumSize(maxWidth_, 100);
+    auto okButton = outerContainer->addWidget(std::make_unique<Wt::WPushButton>("Ok"), Wt::LayoutPosition::South);
+    okButton->disable();
+    okButton->setMaximumSize(maxWidth, 100);
 
-    return std::move(rootContainer);
+    return std::make_tuple(std::move(rootContainer), WlanConfig(okButton));
   }
 
 } // namespace wuci
