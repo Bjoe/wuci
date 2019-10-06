@@ -13,14 +13,14 @@ namespace Wt {
 
 namespace wuci {
 
-  class WlanConfig
+  class WlanPage
   {
   public:
 
-    static std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<WlanConfig>> createPage(Wt::WLength maxWidth);
+    static std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<WlanPage>> create(Wt::WLength maxWidth);
 
   private:
-    WlanConfig(Wt::WPushButton* okButton);
+    WlanPage(Wt::WPushButton* okButton);
 
     Wt::WPushButton* okButton_;
   };

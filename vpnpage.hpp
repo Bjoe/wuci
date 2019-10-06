@@ -14,15 +14,15 @@ namespace Wt {
 
 namespace wuci {
 
-  class VpnConfig
+  class VpnPage
   {
   public:
-    static std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnConfig>> createPage(Wt::WLength maxWidth);
+    static std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnPage>> create(Wt::WLength maxWidth);
 
     void connect(std::function<void()> callback);
 
   private:
-    VpnConfig(Wt::WPushButton* okButton);
+    VpnPage(Wt::WPushButton* okButton);
 
     Wt::WPushButton* okButton_;
   };

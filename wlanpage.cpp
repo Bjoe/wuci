@@ -1,4 +1,4 @@
-#include "wlanconfig.hpp"
+#include "wlanpage.hpp"
 
 #include <Wt/WPanel.h>
 #include <Wt/WText.h>
@@ -10,11 +10,11 @@
 
 namespace wuci {
 
-  WlanConfig::WlanConfig(Wt::WPushButton *okButton) : okButton_(okButton)
+  WlanPage::WlanPage(Wt::WPushButton *okButton) : okButton_(okButton)
   {
   }
 
-  std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<WlanConfig> > WlanConfig::createPage(Wt::WLength maxWidth)
+  std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<WlanPage> > WlanPage::create(Wt::WLength maxWidth)
   {
     auto rootContainer = std::make_unique<Wt::WContainerWidget>();
     auto outerContainer = rootContainer->setLayout(std::make_unique<Wt::WBorderLayout>());
@@ -40,7 +40,7 @@ namespace wuci {
     okButton->disable();
     okButton->setMaximumSize(maxWidth, 100);
 
-    return std::make_tuple(std::move(rootContainer), WlanConfig(okButton));
+    return std::make_tuple(std::move(rootContainer), WlanPage(okButton));
   }
 
 } // namespace wuci

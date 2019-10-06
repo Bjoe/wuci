@@ -7,12 +7,12 @@
 #include <memory>
 #include <optional>
 
-#include "vpnconfig.hpp"
-#include "wlanconfig.hpp"
+#include "vpnpage.hpp"
+#include "wlanpage.hpp"
 
 namespace Wt {
     class WStackedWidget;
-    class WNavigationBar;
+    class WToolBar;
 }
 
 namespace wuci {
@@ -27,11 +27,11 @@ namespace wuci {
 
     private:
         Wt::WStackedWidget* stackedWidget_ = {};
-        Wt::WNavigationBar* navigationBar_ = {};
+        Wt::WToolBar* toolBar_ = {};
 
         Wt::WLength maxWidth_ = {500};
-        std::optional<VpnConfig> vpnConfigPage_ = {};
-        std::optional<WlanConfig> wlanConfigPage_ = {};
+        std::optional<VpnPage> vpnConfigPage_ = {};
+        std::optional<WlanPage> wlanConfigPage_ = {};
     };
 
 } // namespace wuci

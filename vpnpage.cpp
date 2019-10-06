@@ -1,4 +1,4 @@
-#include "vpnconfig.hpp"
+#include "vpnpage.hpp"
 
 #include <Wt/WContainerWidget.h>
 #include <Wt/WSelectionBox.h>
@@ -7,11 +7,11 @@
 
 namespace wuci {
 
-  VpnConfig::VpnConfig(Wt::WPushButton *okButton) : okButton_(okButton)
+  VpnPage::VpnPage(Wt::WPushButton *okButton) : okButton_(okButton)
   {
   }
 
-  std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnConfig> > VpnConfig::createPage(Wt::WLength maxWidth)
+  std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnPage> > VpnPage::create(Wt::WLength maxWidth)
   {
     auto rootContainer = std::make_unique<Wt::WContainerWidget>();
     rootContainer->setId("rootContainer-vpnconfig");
@@ -37,10 +37,10 @@ namespace wuci {
           }
       });
 
-    return std::make_tuple(std::move(rootContainer), VpnConfig(okButton));
+    return std::make_tuple(std::move(rootContainer), VpnPage(okButton));
   }
 
-  void VpnConfig::connect(std::function<void()> callback)
+  void VpnPage::connect(std::function<void()> callback)
   {
     okButton_->clicked().connect(callback);
   }
