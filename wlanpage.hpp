@@ -7,6 +7,8 @@
 #include <tuple>
 #include <optional>
 
+#include "wlanconfig.hpp"
+
 namespace Wt {
     class WPushButton;
 }
@@ -20,9 +22,10 @@ namespace wuci {
     static std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<WlanPage>> create(Wt::WLength maxWidth);
 
   private:
-    WlanPage(Wt::WPushButton* okButton);
+    WlanPage(WlanConfig wlanConfig, Wt::WPushButton* okButton);
 
-    Wt::WPushButton* okButton_;
+    WlanConfig wlanConfig_;
+    Wt::WPushButton* okButton_ = {};
   };
 
 } // namespace wuci
