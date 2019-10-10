@@ -6,7 +6,7 @@
 #include <variant>
 #include <memory>
 
-#include "error.hpp"
+#include "errorcode.hpp"
 
 class uci_context;
 
@@ -18,8 +18,11 @@ public:
     static std::optional<WlanConfig> create();
     ~WlanConfig() = default;
 
-    std::variant<std::string, Error> ssid() const;
-    std::variant<std::string, Error> key() const;
+    std::variant<std::string, ErrorCode> ssid() const;
+    std::variant<std::string, ErrorCode> key() const;
+
+    [[nodiscard]] ErrorCode setSsid(std::string &&ssid);
+    [[nodiscard]] ErrorCode setKey(std::string &&key);
 
 private:
     static constexpr const char* SSID_ = {"wireless.@wifi-iface[-1].ssid"};

@@ -10,7 +10,8 @@
 
 #include <variant>
 
-#include "error.hpp"
+#include "wlanconfig.hpp"
+#include "errorcode.hpp"
 
 // helper type for teh visitor. Will be introduced in C++20
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
@@ -18,7 +19,7 @@ template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 namespace wuci {
 
-  WlanPage::WlanPage(WlanConfig wlanConfig, Wt::WPushButton *okButton) : wlanConfig_(std::move(wlanConfig)), okButton_(okButton)
+  WlanPage::WlanPage(Wt::WPushButton *okButton) : okButton_(okButton)
   {
   }
 
@@ -29,7 +30,7 @@ namespace wuci {
     auto wlc = WlanConfig::create();
     if(wlc)
     {
-        auto w = wlc.value();
+        auto wlanUciConfig = wlc.value();
         auto outerContainer = rootContainer->setLayout(std::make_unique<Wt::WBorderLayout>());
 
         auto container = std::make_unique<Wt::WContainerWidget>();
@@ -39,8 +40,8 @@ namespace wuci {
 
         std::visit(overloaded {
                        [ssidEdit](std::string v){ ssidEdit->setText(v); },
-                       [](wuci::Error){} // TODO improve error
-                   }, w.ssid());
+                       [](wuci::ErrorCode){} // TODO improve error
+                   }, wlanUciConfig.ssid());
 
         container->addNew<Wt::WBreak>();
 
@@ -50,8 +51,8 @@ namespace wuci {
 
         std::visit(overloaded {
                        [passwdEdit](std::string v){ passwdEdit->setText(v); },
-                       [](wuci::Error){} // TODO improve error
-                   }, w.key());
+                       [](wuci::ErrorCode){} // TODO improve error
+                   }, wlanUciConfig.key());
 
         auto page = std::make_unique<Wt::WPanel>();
         page->setCentralWidget(std::move(container));
@@ -60,16 +61,37 @@ namespace wuci {
         outerContainer->addWidget(std::move(page), Wt::LayoutPosition::Center);
 
         auto okButton = outerContainer->addWidget(std::make_unique<Wt::WPushButton>("Ok"), Wt::LayoutPosition::South);
-        okButton->disable();
+        //okButton->disable();
         okButton->setMaximumSize(maxWidth, 100);
 
-        return std::make_tuple(std::move(rootContainer), WlanPage(w, okButton));
+        okButton->clicked().connect(
+        [passwdEdit, ssidEdit](){
+            Wt::WString psswd = passwdEdit->text();
+            Wt::WString ssid = ssidEdit->text();
+            auto u = WlanConfig::create();
+            if(u)
+            {
+                auto w = u.value();
+                auto retKey = w.setKey(psswd.toUTF8());
+                Wt::log("info") << "setKey: " << retKey.error();
+                auto retSSid = w.setSsid(ssid.toUTF8());
+                Wt::log("info") << "setSsid: " << retSSid.error();
+
+            }
+        });
+
+        return std::make_tuple(std::move(rootContainer), WlanPage(okButton));
     }
     else
     {
         // TODO Improve error
         return std::make_tuple(std::move(rootContainer), std::nullopt);
     }
+  }
+
+  void WlanPage::connect(std::function<void ()> callback)
+  {
+
   }
 
 } // namespace wuci

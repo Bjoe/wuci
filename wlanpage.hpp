@@ -4,10 +4,9 @@
 #include <Wt/WWidget.h>
 #include <Wt/WLength.h>
 #include <memory>
+#include <functional>
 #include <tuple>
 #include <optional>
-
-#include "wlanconfig.hpp"
 
 namespace Wt {
     class WPushButton;
@@ -21,10 +20,11 @@ namespace wuci {
 
     static std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<WlanPage>> create(Wt::WLength maxWidth);
 
-  private:
-    WlanPage(WlanConfig wlanConfig, Wt::WPushButton* okButton);
+    void connect(std::function<void()> callback);
 
-    WlanConfig wlanConfig_;
+  private:
+    WlanPage(Wt::WPushButton* okButton);
+
     Wt::WPushButton* okButton_ = {};
   };
 
