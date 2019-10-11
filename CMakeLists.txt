@@ -38,6 +38,7 @@ add_executable(wuci
     main.cpp
     webmain.cpp
     vpnpage.cpp
+    vpnuploadpage.cpp
     wlanpage.cpp
     wlanconfig.cpp
     errorcode.cpp

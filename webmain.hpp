@@ -8,6 +8,7 @@
 #include <optional>
 
 #include "vpnpage.hpp"
+#include "vpnuploadpage.hpp"
 #include "wlanpage.hpp"
 
 namespace Wt {
@@ -30,7 +31,8 @@ namespace wuci {
         Wt::WToolBar* toolBar_ = {};
 
         Wt::WLength maxWidth_ = {500};
-        std::optional<VpnPage> vpnConfigPage_ = {};
+        //std::optional<VpnPage> vpnConfigPage_ = {};
+        std::optional<VpnUploadPage> vpnConfigPage_ = {};
         std::optional<WlanPage> wlanConfigPage_ = {};
     };
 

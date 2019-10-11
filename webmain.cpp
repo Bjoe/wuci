@@ -36,7 +36,8 @@ namespace wuci {
 
   void WebMain::prepareVpnConfigPage()
   {
-    auto[widgetPage, instance] = VpnPage::create(maxWidth_);
+    //auto[widgetPage, instance] = VpnPage::create(maxWidth_);
+    auto[widgetPage, instance] = VpnUploadPage::create(maxWidth_);
     vpnConfigPage_ = instance;
     stackedWidget_->addWidget(std::move(widgetPage));
   }
@@ -50,6 +51,18 @@ namespace wuci {
     vpnConfigPage_->connect([this, wc]()
     {
       stackedWidget_->setCurrentWidget(wc);
+    });
+
+
+
+    // Done
+
+    auto container = std::make_unique<Wt::WContainerWidget>();
+    container->addNew<Wt::WText>("Done");
+    Wt::WWidget* wi = stackedWidget_->addWidget<Wt::WWidget>(std::move(container));
+    wlanConfigPage_->connect([this, wi]()
+    {
+        stackedWidget_->setCurrentWidget(wi);
     });
   }
 

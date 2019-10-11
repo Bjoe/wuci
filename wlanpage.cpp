@@ -91,7 +91,7 @@ namespace wuci {
 
   void WlanPage::connect(std::function<void ()> callback)
   {
-
+      okButton_->clicked().connect(callback);
   }
 
 } // namespace wuci
