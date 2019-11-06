@@ -11,6 +11,7 @@ PKG_RELEASE:=1
 #SOURCE_DIR:=/home/buildbot/wuci
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/cmake.mk
 
 # Package definition; instructs on how and where our package will appear in the overall configuration menu ('make menuconfig')
 define Package/wuci
@@ -42,3 +43,5 @@ endef
 # Package install instructions; create a directory inside the package to hold our executable, and then copy the executable we built previously into the folder
 define Package/wuci/install
 endef
+
+$(eval $(call BuildPackage,wuci))
