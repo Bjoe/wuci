@@ -24,11 +24,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(wt CONFIG REQUIRED)
 
-find_library(UCI_LIBRARY name uci)
-find_path(UCI_INCLUDE name uci.h)
+find_library(UCI_LIBRARY uci)
+find_path(UCI_INCLUDE uci.h)
 # uci depends on ubox
-find_library(UBOX_LIBRARY name ubox)
-find_path(UBOX_INCLUDE name libubox/usock.h)
+find_library(UBOX_LIBRARY ubox)
+find_path(UBOX_INCLUDE libubox/usock.h)
 
 add_executable(wuci
     main.cpp

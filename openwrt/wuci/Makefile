@@ -6,9 +6,13 @@ PKG_NAME:=wuci
 PKG_VERSION:=1.0
 PKG_RELEASE:=1
 
+#PKG_SOURCE:=$(PKG_VERSION).tar.gz
+#PKG_SOURCE_URL:=https://github.com
+#PKG_MD5SUM:=6f4faa4bc117a53449bca446c2e7a92f
+
 # Source settings (i.e. where to find the source codes)
 # This is a custom variable, used below
-#SOURCE_DIR:=/home/buildbot/wuci
+SOURCE_DIR:=/home/jboehme/Development/wuci/source
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
@@ -19,7 +23,7 @@ define Package/wuci
   CATEGORY:=Libraries
   SUBMENU:=Web toolkit
   TITLE:=WUCI
-  DEPENDS:=+wt
+  DEPENDS:=+wt +libuci
   MENU:=1
 endef
 
@@ -30,11 +34,11 @@ endef
 
 # Package preparation instructions; create the build directory and copy the source code. 
 # The last command is necessary to ensure our preparation instructions remain compatible with the patching system.
-#define Build/Prepare
-#        mkdir -p $(PKG_BUILD_DIR)
-#        cp $(SOURCE_DIR)/* $(PKG_BUILD_DIR)
-#        $(Build/Patch)
-#endef
+define Build/Prepare
+	mkdir -p $(PKG_BUILD_DIR)
+	cp -r $(SOURCE_DIR)/* $(PKG_BUILD_DIR)
+	$(Build/Patch)
+endef
 
 # Package build instructions; invoke the target-specific compiler to first compile the source file, and then to link the file into the final executable
 define Build/Compile
