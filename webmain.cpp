@@ -20,35 +20,35 @@ namespace wuci {
 
     auto rootContainer = root();
 
-    rootContainer->addNew<Wt::WText>("Start ->>");
-
-    toolBar_ = rootContainer->addNew<Wt::WToolBar>();
-    auto vpnConfigButton = std::make_unique<Wt::WPushButton>("VPN config");
-    vpnConfigButton->setChecked(true);
-    toolBar_->addButton(std::move(vpnConfigButton), Wt::AlignmentFlag::Middle);
-    auto wlanConfigButton = std::make_unique<Wt::WPushButton>("WLAN config");
-    toolBar_->addButton(std::move(wlanConfigButton), Wt::AlignmentFlag::Middle);
-
-    rootContainer->addNew<Wt::WText>(" >> Finish");
+    navigationBar_ = rootContainer->addNew<Wt::WNavigationBar>();
+    navigationBar_->setTitle("Easy Config", "http://startpage.com");
+    navigationBar_->setResponsive(true);
 
     stackedWidget_ = rootContainer->addNew<Wt::WStackedWidget>();
+    stackedWidget_->addStyleClass("contents");
+
+    auto lm = std::make_unique<Wt::WMenu>(stackedWidget_);
+    leftMenu_ = navigationBar_->addMenu(std::move(lm));
   }
 
   void WebMain::prepareVpnConfigPage()
   {
     //auto[widgetPage, instance] = VpnPage::create(maxWidth_);
-    auto[widgetPage, instance] = VpnUploadPage::create(maxWidth_);
+    auto[widgetPage, instance] = VpnUploadPage::create(messageBus_, maxWidth_);
     vpnConfigPage_ = instance;
-    stackedWidget_->addWidget(std::move(widgetPage));
+
+    //stackedWidget_->addWidget(std::move(widgetPage));
+    leftMenu_->addItem("VPN", std::move(widgetPage));
   }
 
   void WebMain::prepareWlanConfigPage()
   {
-    auto[widgetPage, instance] = WlanPage::create(maxWidth_);
+    auto[widgetPage, instance] = WlanPage::create(messageBus_, maxWidth_);
     wlanConfigPage_ = instance;
 
-    Wt::WWidget* wc = stackedWidget_->addWidget<Wt::WWidget>(std::move(widgetPage));
-    vpnConfigPage_->connect([this, wc]()
+    //Wt::WWidget* wc = stackedWidget_->addWidget<Wt::WWidget>(std::move(widgetPage));
+    leftMenu_->addItem("WLAN", std::move(widgetPage));
+/*    vpnConfigPage_->connect([this, wc]()
     {
       stackedWidget_->setCurrentWidget(wc);
     });
@@ -63,7 +63,7 @@ namespace wuci {
     wlanConfigPage_->connect([this, wi]()
     {
         stackedWidget_->setCurrentWidget(wi);
-    });
+    });*/
   }
 
 } // namespace wuci

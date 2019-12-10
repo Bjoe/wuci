@@ -1,4 +1,4 @@
-#include "wlanpage.hpp"
+#include <variant>
 
 #include <Wt/WPanel.h>
 #include <Wt/WText.h>
@@ -7,13 +7,13 @@
 #include <Wt/WContainerWidget.h>
 #include <Wt/WBorderLayout.h>
 #include <Wt/WPushButton.h>
-
-#include <variant>
+#include <Wt/WMessageBox.h>
 
 #include "wlanconfig.hpp"
 #include "errorcode.hpp"
+#include "wlanpage.hpp"
 
-// helper type for teh visitor. Will be introduced in C++20
+// helper type for the visitor. Will be introduced in C++20
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
@@ -23,7 +23,8 @@ namespace wuci {
   {
   }
 
-  std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<WlanPage> > WlanPage::create(Wt::WLength maxWidth)
+  std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<WlanPage> > WlanPage::create(std::optional<MessageBus> msgBus,
+                                                                                      Wt::WLength maxWidth)
   {
     auto rootContainer = std::make_unique<Wt::WContainerWidget>();
 
@@ -65,18 +66,31 @@ namespace wuci {
         okButton->setMaximumSize(maxWidth, 100);
 
         okButton->clicked().connect(
-        [passwdEdit, ssidEdit](){
+        [passwdEdit, ssidEdit, msgBus](){
             Wt::WString psswd = passwdEdit->text();
             Wt::WString ssid = ssidEdit->text();
             auto u = WlanConfig::create();
-            if(u)
+            if(u && msgBus)
             {
                 auto w = u.value();
+                auto retEnc = w.setEncryption("psk2");
+                Wt::log("info") << "Set encryption: " << retEnc.error();
                 auto retKey = w.setKey(psswd.toUTF8());
-                Wt::log("info") << "setKey: " << retKey.error();
+                Wt::log("info") << "Set key: " << retKey.error();
                 auto retSSid = w.setSsid(ssid.toUTF8());
-                Wt::log("info") << "setSsid: " << retSSid.error();
+                Wt::log("info") << "Set ssid: " << retSSid.error();
 
+                msgBus.value().restartNetwork();
+
+                Wt::WMessageBox::show("WLAN Ok",
+                                          "<p>WLAN is successfully configured.</p>",
+                                          Wt::StandardButton::Ok);
+            }
+            else
+            {
+                Wt::WMessageBox::show("WLAN Error",
+                                          "<p>Configure failed.</p>",
+                                          Wt::StandardButton::Ok);
             }
         });
 

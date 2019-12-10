@@ -6,6 +6,7 @@
 #include <Wt/WBorderLayout.h>
 #include <Wt/WText.h>
 #include <Wt/Utils.h>
+#include <Wt/WMessageBox.h>
 
 #include <iostream>
 #include <fstream>
@@ -15,7 +16,8 @@ namespace wuci {
 VpnUploadPage::VpnUploadPage(Wt::WPushButton *okButton, Wt::WText *state) : okButton_(okButton), state_(state)
 {}
 
-std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnUploadPage>> VpnUploadPage::create(Wt::WLength maxWidth)
+std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnUploadPage>> VpnUploadPage::create(std::optional<MessageBus> msgBus,
+                                                                                             Wt::WLength maxWidth)
 {
     auto rootContainer = std::make_unique<Wt::WContainerWidget>();
     rootContainer->setId("rootContainer-vpnupload");
@@ -30,10 +32,11 @@ std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnUploadPage>> VpnUpload
     state->setInline(false);
     state->setTextFormat(Wt::TextFormat::XHTML);
 
-    auto okButton = southContainer->addNew<Wt::WPushButton>("Ok");
+    Wt::WPushButton *okButton; // TODO Do we need push button?
+    /*auto okButton = southContainer->addNew<Wt::WPushButton>("Ok");
     okButton->disable();
     okButton->setMaximumSize(maxWidth, 100);
-
+*/
     dropWidget->drop().connect([=] (const std::vector<Wt::WFileDropWidget::File*>& files) {
       const int maxFiles = 1;
       auto prevNbFiles = dropWidget->uploads().size() - files.size();
@@ -61,6 +64,9 @@ std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnUploadPage>> VpnUpload
         {
             std::ofstream dest(OPENVPN_CONFIG_FILE_, std::ios::binary);
             if (dest.fail()) {
+                Wt::WMessageBox::show("VPN Fail",
+                                          "Failed to save vpn configuration file",
+                                          Wt::StandardButton::Ok);
               Wt::log("Error") << "Failed to save openvpn configuration file";
               break;
             }
@@ -69,8 +75,13 @@ std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnUploadPage>> VpnUpload
             dest << src.rdbuf();
 
             std::string fileName = Wt::Utils::htmlEncode(file->clientFileName());
-            state->setText("File <i>&quot;" + fileName + "&quot;</i> uploaded.");
-            okButton->enable();
+
+            if(msgBus)
+                msgBus.value().restartProcess("openvpn");
+
+            Wt::WMessageBox::show("VPN Ok",
+                                      "<p>File <i>&quot;" + fileName + "&quot;</i> uploaded.</p>",
+                                      Wt::StandardButton::Ok);
             break;
          }
       }

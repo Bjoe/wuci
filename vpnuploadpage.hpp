@@ -1,12 +1,15 @@
 #ifndef WUCI_VPNUPLOADPAGE_HPP
 #define WUCI_VPNUPLOADPAGE_HPP
 
-#include <Wt/WWidget.h>
-#include <Wt/WLength.h>
 #include <memory>
 #include <functional>
 #include <tuple>
 #include <optional>
+
+#include <Wt/WWidget.h>
+#include <Wt/WLength.h>
+
+#include "messagebus.hpp"
 
 namespace Wt {
     class WPushButton;
@@ -18,7 +21,8 @@ namespace wuci {
 class VpnUploadPage
 {
 public:
-    static std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnUploadPage>> create(Wt::WLength maxWidth);
+    static std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnUploadPage>> create(std::optional<MessageBus> msgBus,
+                                                                                         Wt::WLength maxWidth);
 
     void connect(std::function<void()> callback);
 

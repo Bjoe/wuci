@@ -1,12 +1,13 @@
 #ifndef WUCI_VPNCONFIG_HPP
 #define WUCI_VPNCONFIG_HPP
 
-#include <Wt/WWidget.h>
-#include <Wt/WLength.h>
 #include <memory>
 #include <functional>
 #include <tuple>
 #include <optional>
+
+#include <Wt/WWidget.h>
+#include <Wt/WLength.h>
 
 namespace Wt {
     class WPushButton;
@@ -24,7 +25,7 @@ namespace wuci {
   private:
     VpnPage(Wt::WPushButton* okButton);
 
-    Wt::WPushButton* okButton_;
+    Wt::WPushButton* okButton_ = {};
   };
 
 } // namespace wuci

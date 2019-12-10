@@ -87,7 +87,8 @@ std::variant<std::string, ErrorCode> getUciValue(uci_context* ctx, const char* c
 
     uci_element *e = ptr.last;
 
-    if(e->type == UCI_TYPE_OPTION && ptr.o->type == UCI_TYPE_STRING)
+    if((e && e->type == UCI_TYPE_OPTION && ptr.o->type == UCI_TYPE_STRING) ||
+            (ptr.o == nullptr && not std::string(ptr.option).empty()))
     {
         verify([ctx, &ptr](){ return uci_set(ctx, &ptr); }, "UCI set");
         verify([ctx, &ptr](){ return uci_save(ctx, ptr.p);}, "UCI save");
@@ -142,6 +143,12 @@ std::variant<std::string, ErrorCode> WlanConfig::key() const
     return getUciValue(ctx_.get(), key);
 }
 
+std::variant<std::string, ErrorCode> WlanConfig::encryption() const
+{
+    auto* enc = ENCRYPTION_;
+    return getUciValue(ctx_.get(), enc);
+}
+
 ErrorCode WlanConfig::setSsid(std::string&& ssid)
 {
     std::string value{SSID_};
@@ -155,6 +162,14 @@ ErrorCode WlanConfig::setKey(std::string&& key)
     std::string value{KEY_};
     value.append("=");
     value.append(key);
+    return setUciValue(ctx_.get(), std::move(value));
+}
+
+ErrorCode WlanConfig::setEncryption(std::string &&enc)
+{
+    std::string value{ENCRYPTION_};
+    value.append("=");
+    value.append(enc);
     return setUciValue(ctx_.get(), std::move(value));
 }
 

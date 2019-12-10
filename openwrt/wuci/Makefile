@@ -23,7 +23,7 @@ define Package/wuci
   CATEGORY:=Libraries
   SUBMENU:=Web toolkit
   TITLE:=WUCI
-  DEPENDS:=+wt +libuci
+  DEPENDS:=+wt-http +libuci +libubus
   MENU:=1
 endef
 
@@ -46,6 +46,8 @@ endef
 
 # Package install instructions; create a directory inside the package to hold our executable, and then copy the executable we built previously into the folder
 define Package/wuci/install
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(CP) $(PKG_INSTALL_DIR)/usr/bin/wuci $(1)/usr/bin
 endef
 
 $(eval $(call BuildPackage,wuci))

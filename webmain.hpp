@@ -10,10 +10,12 @@
 #include "vpnpage.hpp"
 #include "vpnuploadpage.hpp"
 #include "wlanpage.hpp"
+#include "messagebus.hpp"
 
 namespace Wt {
     class WStackedWidget;
-    class WToolBar;
+    class WNavigationBar;
+    class WMenu;
 }
 
 namespace wuci {
@@ -28,12 +30,14 @@ namespace wuci {
 
     private:
         Wt::WStackedWidget* stackedWidget_ = {};
-        Wt::WToolBar* toolBar_ = {};
+        Wt::WNavigationBar* navigationBar_ = {};
+        Wt::WMenu* leftMenu_ = {};
 
         Wt::WLength maxWidth_ = {500};
         //std::optional<VpnPage> vpnConfigPage_ = {};
         std::optional<VpnUploadPage> vpnConfigPage_ = {};
         std::optional<WlanPage> wlanConfigPage_ = {};
+        std::optional<MessageBus> messageBus_ = MessageBus::create();
     };
 
 } // namespace wuci
