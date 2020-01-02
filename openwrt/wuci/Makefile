@@ -23,7 +23,7 @@ define Package/wuci
   CATEGORY:=Libraries
   SUBMENU:=Web toolkit
   TITLE:=WUCI
-  DEPENDS:=+wt-http +libuci +libubus
+  DEPENDS:=+wt-http +libuci +libubus +librt +libstdcpp
   MENU:=1
 endef
 
