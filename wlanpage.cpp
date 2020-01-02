@@ -9,7 +9,7 @@
 #include <Wt/WPushButton.h>
 #include <Wt/WMessageBox.h>
 
-#include "wlanconfig.hpp"
+#include "universalconfig.hpp"
 #include "errorcode.hpp"
 #include "wlanpage.hpp"
 
@@ -28,7 +28,7 @@ namespace wuci {
   {
     auto rootContainer = std::make_unique<Wt::WContainerWidget>();
 
-    auto wlc = WlanConfig::create();
+    auto wlc = UniversalConfig::create();
     if(wlc)
     {
         auto wlanUciConfig = wlc.value();
@@ -69,7 +69,7 @@ namespace wuci {
         [passwdEdit, ssidEdit, msgBus](){
             Wt::WString psswd = passwdEdit->text();
             Wt::WString ssid = ssidEdit->text();
-            auto u = WlanConfig::create();
+            auto u = UniversalConfig::create();
             if(u && msgBus)
             {
                 auto w = u.value();

@@ -27,7 +27,7 @@ public:
     void connect(std::function<void()> callback);
 
 private:
-    static constexpr const char* OPENVPN_CONFIG_FILE_ = {"/etc/openvpn/vpn.opvn"};
+    static constexpr const char* OPENVPN_CONFIG_FILE_ = {"/etc/openvpn/my-vpn.conf"};
 
     VpnUploadPage(Wt::WPushButton* okButton, Wt::WText* state);
 

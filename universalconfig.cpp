@@ -1,4 +1,4 @@
-#include "wlanconfig.hpp"
+#include "universalconfig.hpp"
 
 #include <vector>
 #include <cstdlib>
@@ -119,7 +119,7 @@ std::variant<std::string, ErrorCode> getUciValue(uci_context* ctx, const char* c
 }
 }
 
-std::optional<WlanConfig> WlanConfig::create()
+std::optional<UniversalConfig> UniversalConfig::create()
 {
     uci_context* ctx = uci_alloc_context();
     if(!ctx)
@@ -128,28 +128,28 @@ std::optional<WlanConfig> WlanConfig::create()
     }
 
     std::shared_ptr<uci_context> c = {ctx, uci_free_context};
-    return WlanConfig(c);
+    return UniversalConfig(c);
 }
 
-std::variant<std::string, ErrorCode> WlanConfig::ssid() const
+std::variant<std::string, ErrorCode> UniversalConfig::ssid() const
 {
     auto* ssid =  SSID_;
     return getUciValue(ctx_.get(), ssid);
 }
 
-std::variant<std::string, ErrorCode> WlanConfig::key() const
+std::variant<std::string, ErrorCode> UniversalConfig::key() const
 {
     auto* key = KEY_;
     return getUciValue(ctx_.get(), key);
 }
 
-std::variant<std::string, ErrorCode> WlanConfig::encryption() const
+std::variant<std::string, ErrorCode> UniversalConfig::encryption() const
 {
     auto* enc = ENCRYPTION_;
     return getUciValue(ctx_.get(), enc);
 }
 
-ErrorCode WlanConfig::setSsid(std::string&& ssid)
+ErrorCode UniversalConfig::setSsid(std::string&& ssid)
 {
     std::string value{SSID_};
     value.append("=");
@@ -157,7 +157,7 @@ ErrorCode WlanConfig::setSsid(std::string&& ssid)
     return setUciValue(ctx_.get(), std::move(value));
 }
 
-ErrorCode WlanConfig::setKey(std::string&& key)
+ErrorCode UniversalConfig::setKey(std::string&& key)
 {
     std::string value{KEY_};
     value.append("=");
@@ -165,7 +165,7 @@ ErrorCode WlanConfig::setKey(std::string&& key)
     return setUciValue(ctx_.get(), std::move(value));
 }
 
-ErrorCode WlanConfig::setEncryption(std::string &&enc)
+ErrorCode UniversalConfig::setEncryption(std::string &&enc)
 {
     std::string value{ENCRYPTION_};
     value.append("=");
@@ -173,7 +173,14 @@ ErrorCode WlanConfig::setEncryption(std::string &&enc)
     return setUciValue(ctx_.get(), std::move(value));
 }
 
-WlanConfig::WlanConfig(std::shared_ptr<uci_context> ctx) : ctx_(ctx)
+ErrorCode UniversalConfig::enableOpenvpn()
+{
+    std::string value{OPENVPN_};
+    value.append("=1");
+    return setUciValue(ctx_.get(), std::move(value));
+}
+
+UniversalConfig::UniversalConfig(std::shared_ptr<uci_context> ctx) : ctx_(ctx)
 {}
 
 } // namespace wuci

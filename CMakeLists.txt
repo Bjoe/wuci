@@ -49,7 +49,7 @@ add_executable(wuci
     vpnpage.cpp
     vpnuploadpage.cpp
     wlanpage.cpp
-    wlanconfig.cpp
+    universalconfig.cpp
     errorcode.cpp
     messagebus.cpp
 )

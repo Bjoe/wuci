@@ -11,6 +11,8 @@
 #include <iostream>
 #include <fstream>
 
+#include "universalconfig.hpp"
+
 namespace wuci {
 
 VpnUploadPage::VpnUploadPage(Wt::WPushButton *okButton, Wt::WText *state) : okButton_(okButton), state_(state)
@@ -76,8 +78,13 @@ std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnUploadPage>> VpnUpload
 
             std::string fileName = Wt::Utils::htmlEncode(file->clientFileName());
 
-            if(msgBus)
+            auto u = UniversalConfig::create();
+            if(u && msgBus) {
+                auto w = u.value();
+                auto retEnc = w.enableOpenvpn();
+                Wt::log("info") << "Enable OpenVPN: " << retEnc.error();
                 msgBus.value().restartProcess("openvpn");
+            }
 
             Wt::WMessageBox::show("VPN Ok",
                                       "<p>File <i>&quot;" + fileName + "&quot;</i> uploaded.</p>",
