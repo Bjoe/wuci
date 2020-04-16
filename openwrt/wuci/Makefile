@@ -12,7 +12,7 @@ PKG_RELEASE:=1
 
 # Source settings (i.e. where to find the source codes)
 # This is a custom variable, used below
-SOURCE_DIR:=/home/jboehme/Development/wuci/source
+SOURCE_DIR:=/home/build/sources/wuci
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
@@ -46,6 +46,11 @@ endef
 
 # Package install instructions; create a directory inside the package to hold our executable, and then copy the executable we built previously into the folder
 define Package/wuci/install
+	$(INSTALL_DIR) $(1)/etc/wt
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/openwrt/config/wuci_config.xml $(1)/etc/wt
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/openwrt/config/wthttpd $(1)/etc/wt
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/openwrt/scripts/wuci $(1)/etc/init.d/wuci
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(CP) $(PKG_INSTALL_DIR)/usr/bin/wuci $(1)/usr/bin
 endef

@@ -1,0 +1,6 @@
+http-listen=0.0.0.0:8080
+config=/etc/wt/wuci_config.xml
+docroot=/var/www/docroot;/favicon.ico,/resources,/style
+approot=/var/www/approot
+resources-dir=/usr/share/Wt/resources
+pid-file=/var/run/wuci.pid

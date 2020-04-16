@@ -1,0 +1,28 @@
+#!/bin/sh /etc/rc.common
+
+START=100
+STOP=10
+
+USE_PROCD=1
+PROG=/usr/bin/wuci
+
+start_service() {
+ [ ! -d "/var/run/wt" ] && mkdir -p "/var/run/wt"
+ [ ! -d "/var/www/docroot" ] && mkdir -p "/var/www/docroot"
+ [ ! -d "/var/www/approot" ] && mkdir -p "/var/www/approot"
+
+  procd_open_instance
+
+  procd_set_param command "$PROG"
+
+  # respawn automatically if something died, be careful if you have an alternative process supervisor
+  # if process dies sooner than respawn_threshold, it is considered crashed and after 5 retries the service is stopped
+  procd_set_param respawn ${respawn_threshold:-3600} ${respawn_timeout:-5} ${respawn_retry:-5}
+
+  procd_set_param file /etc/wt/whttpd # /etc/init.d/your_service reload will restart the daemon if these files have changed
+  procd_set_param netdev dev # likewise, except if dev's ifindex changes.
+  procd_set_param stdout 1 # forward stdout of the command to logd
+  procd_set_param stderr 1 # same for stderr
+  #procd_set_param user nobody # run service as user nobody
+  procd_close_instance
+}
