@@ -17,6 +17,7 @@ public:
 
     int restartProcess(std::string processName) const;
     int restartNetwork() const;
+    void restartSystem() const;
 
 private:
     MessageBus(std::shared_ptr<ubus_context> ubusCtx);

@@ -7,7 +7,9 @@
 #include <Wt/WText.h>
 #include <Wt/Utils.h>
 #include <Wt/WMessageBox.h>
+#include <Wt/WTimer.h>
 
+#include <chrono>
 #include <iostream>
 #include <fstream>
 
@@ -16,7 +18,8 @@
 namespace wuci {
 
 VpnUploadPage::VpnUploadPage(Wt::WPushButton *okButton, Wt::WText *state) : okButton_(okButton), state_(state)
-{}
+{
+}
 
 std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnUploadPage>> VpnUploadPage::create(std::optional<MessageBus> msgBus,
                                                                                              Wt::WLength maxWidth)
@@ -33,6 +36,17 @@ std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnUploadPage>> VpnUpload
     auto state = southContainer->addNew<Wt::WText>("Ready");
     state->setInline(false);
     state->setTextFormat(Wt::TextFormat::XHTML);
+
+    auto messageBox = rootContainer->addChild(std::make_unique<Wt::WMessageBox>("Reboot",
+                                                                                "<p>System reboot .... wait 3 sec., then reload the page ...</p>",
+                                                                                Wt::Icon::Information, Wt::StandardButton::None));
+    auto restartTimer = rootContainer->addChild(std::make_unique<Wt::WTimer>());
+    restartTimer->setInterval(std::chrono::seconds(2));
+    restartTimer->setSingleShot(true);
+    restartTimer->timeout().connect([messageBox, msgBus]{
+        messageBox->show();
+        msgBus->restartSystem();
+    });
 
     Wt::WPushButton *okButton; // TODO Do we need push button?
     /*auto okButton = southContainer->addNew<Wt::WPushButton>("Ok");
@@ -66,10 +80,10 @@ std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnUploadPage>> VpnUpload
         {
             std::ofstream dest(OPENVPN_CONFIG_FILE_, std::ios::binary);
             if (dest.fail()) {
+                Wt::log("Error") << "Failed to save openvpn configuration file";
                 Wt::WMessageBox::show("VPN Fail",
                                           "Failed to save vpn configuration file",
                                           Wt::StandardButton::Ok);
-              Wt::log("Error") << "Failed to save openvpn configuration file";
               break;
             }
             std::string spool = file->uploadedFile().spoolFileName();
@@ -83,12 +97,13 @@ std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnUploadPage>> VpnUpload
                 auto w = u.value();
                 auto retEnc = w.enableOpenvpn();
                 Wt::log("info") << "Enable OpenVPN: " << retEnc.error();
-                msgBus.value().restartProcess("openvpn");
+                //msgBus.value().restartProcess("openvpn"); TODO On First time there is no openvpn process
             }
 
             Wt::WMessageBox::show("VPN Ok",
                                       "<p>File <i>&quot;" + fileName + "&quot;</i> uploaded.</p>",
                                       Wt::StandardButton::Ok);
+            restartTimer->start();
             break;
          }
       }

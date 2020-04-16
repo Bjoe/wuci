@@ -27,8 +27,8 @@ int main(int argc, char **argv)
                          [] (const Wt::WEnvironment& env) -> std::unique_ptr<Wt::WApplication>
     {
         auto main = std::make_unique<wuci::WebMain>(env);
-        main->prepareVpnConfigPage();
         main->prepareWlanConfigPage();
+        main->prepareVpnConfigPage();
         return std::move(main);
     });
 

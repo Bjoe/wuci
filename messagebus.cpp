@@ -39,6 +39,16 @@ int MessageBus::restartNetwork() const
     return ubus_invoke(ubusCtx_.get(), objId, "restart", buf.head, nullptr, nullptr, 3000);
 }
 
+void MessageBus::restartSystem() const
+{
+    std::uint32_t objId{};
+    ubus_lookup_id(ubusCtx_.get(), "system", &objId);
+
+    blob_buf buf{};
+    blob_buf_init(&buf, 0);
+    ubus_invoke(ubusCtx_.get(), objId, "reboot", buf.head, nullptr, nullptr, 3000);
+}
+
 MessageBus::MessageBus(std::shared_ptr<ubus_context> ubusCtx) : ubusCtx_(std::move(ubusCtx))
 {
 
