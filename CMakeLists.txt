@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5)
 # Setup in OpenWRT SDK
 # cd /home/build/openwrt
 # touch feeds.conf
-# echo "src-link webtoolkit /home/jboehme/Development/wt/source/target/openwrt" > feeds.conf
+# echo "src-link webtoolkit /home/build/Development/wt/source/target/openwrt" > feeds.conf
 # cat feeds.conf.default >> feeds.conf
 # ./scripts/feeds update -a
 # ./scripts/feeds install libuci
@@ -33,6 +33,7 @@ if(CMAKE_VERSION VERSION_LESS "3.8")
 endif()
 
 find_package(wt CONFIG REQUIRED)
+#find_package(Boost REQUIRED)
 
 find_library(UCI_LIBRARY uci)
 find_path(UCI_INCLUDE uci.h)
@@ -52,6 +53,7 @@ add_executable(wuci
     universalconfig.cpp
     errorcode.cpp
     messagebus.cpp
+    loghandler.cpp
 )
 target_include_directories(wuci PUBLIC ${UCI_INCLUDE} ${UBUS_INCLUDE} ${UBOX_INCLUDE})
 target_link_libraries(wuci PUBLIC
@@ -60,15 +62,10 @@ target_link_libraries(wuci PUBLIC
   ${UBOX_LIBRARY}
   Wt::Wt
   Wt::HTTP
+#  Boost::headers
 )
 if(CMAKE_VERSION VERSION_GREATER "3.7")
     target_compile_features(wuci PUBLIC cxx_std_17)
 endif()
 
 install(TARGETS wuci RUNTIME DESTINATION bin)
-
-# Notice
-#
-# Stop service: ubus call service delete '{"name":"uhttpd","instance":"instance1"}'
-# Start service:
-# List all services: ubus call service list

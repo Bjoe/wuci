@@ -5,6 +5,8 @@
 #include <memory>
 #include <optional>
 
+#include "loghandler.hpp"
+
 struct ubus_context;
 
 namespace wuci {
@@ -15,6 +17,7 @@ public:
     static std::optional<MessageBus> create();
     ~MessageBus() = default;
 
+    std::optional<LogHandler> readLog() const;
     int restartProcess(std::string processName) const;
     int restartNetwork() const;
     void restartSystem() const;

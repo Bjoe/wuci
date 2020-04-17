@@ -8,11 +8,16 @@
 #include <Wt/Utils.h>
 #include <Wt/WMessageBox.h>
 #include <Wt/WTimer.h>
+#include <Wt/WAnimation.h>
+#include <Wt/WPanel.h>
+#include <Wt/WText.h>
 
 #include <chrono>
 #include <iostream>
 #include <fstream>
+#include <deque>
 
+#include "loghandler.hpp"
 #include "universalconfig.hpp"
 
 namespace wuci {
@@ -24,18 +29,45 @@ VpnUploadPage::VpnUploadPage(Wt::WPushButton *okButton, Wt::WText *state) : okBu
 std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnUploadPage>> VpnUploadPage::create(std::optional<MessageBus> msgBus,
                                                                                              Wt::WLength maxWidth)
 {
+    std::optional<LogHandler> logHandler{};
+    if(msgBus) {
+        logHandler = msgBus->readLog();
+    }
+
     auto rootContainer = std::make_unique<Wt::WContainerWidget>();
     rootContainer->setId("rootContainer-vpnupload");
     auto container = rootContainer->setLayout(std::make_unique<Wt::WBorderLayout>());
     container->setSpacing(20);
+
+
+    auto northContainer = container->addWidget(std::make_unique<Wt::WContainerWidget>(), Wt::LayoutPosition::North);
+    auto logArea = northContainer->addNew<Wt::WText>(Wt::WString("<p>empty</p>"));
+    auto loadLogsButton = northContainer->addNew<Wt::WPushButton>("Load VPN logs");
+    loadLogsButton->clicked().connect([logHandler, logArea](){
+        std::string msg;
+        for(const std::string& m : logHandler->getMessages()) {
+           msg.append("<p>" + m + "</p>");
+        }
+        if(msg.empty())
+            msg.append("<p>No VPN logs. VPN is not yet configured/started</p>");
+
+        logArea->setText(Wt::WString("<p>{1}</p>").arg(msg));
+    });
+
+
     container->addWidget(std::make_unique<Wt::WText>("<h3>Dropping openvpn configuration file in the widget below</h3>"), Wt::LayoutPosition::North);
     auto dropWidget = container->addWidget(std::make_unique<Wt::WFileDropWidget>(), Wt::LayoutPosition::Center);
 
-    auto southContainer = std::make_unique<Wt::WContainerWidget>();
 
+
+    auto southContainer = container->addWidget(std::make_unique<Wt::WContainerWidget>(), Wt::LayoutPosition::South);
     auto state = southContainer->addNew<Wt::WText>("Ready");
     state->setInline(false);
     state->setTextFormat(Wt::TextFormat::XHTML);
+
+
+
+
 
     auto messageBox = rootContainer->addChild(std::make_unique<Wt::WMessageBox>("Reboot",
                                                                                 "<p>System reboot .... wait 3 sec., then reload the page ...</p>",
@@ -45,14 +77,10 @@ std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnUploadPage>> VpnUpload
     restartTimer->setSingleShot(true);
     restartTimer->timeout().connect([messageBox, msgBus]{
         messageBox->show();
-        msgBus->restartSystem();
+        if(msgBus)
+            msgBus->restartSystem();
     });
 
-    Wt::WPushButton *okButton; // TODO Do we need push button?
-    /*auto okButton = southContainer->addNew<Wt::WPushButton>("Ok");
-    okButton->disable();
-    okButton->setMaximumSize(maxWidth, 100);
-*/
     dropWidget->drop().connect([=] (const std::vector<Wt::WFileDropWidget::File*>& files) {
       const int maxFiles = 1;
       auto prevNbFiles = dropWidget->uploads().size() - files.size();
@@ -131,8 +159,7 @@ std::tuple<std::unique_ptr<Wt::WWidget>, std::optional<VpnUploadPage>> VpnUpload
       dropWidget->widget(idx)->addStyleClass("failed");
     });
 
-    container->addWidget(std::move(southContainer), Wt::LayoutPosition::South);
-    return std::make_tuple(std::move(rootContainer), VpnUploadPage(okButton, state));
+    return std::make_tuple(std::move(rootContainer), VpnUploadPage(nullptr, state));
 }
 
 void VpnUploadPage::connect(std::function<void ()> callback)
